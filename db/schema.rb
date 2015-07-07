@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20150705070821) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "fb_users", force: :cascade do |t|
     t.string   "provider"
     t.string   "uid"
@@ -33,7 +36,7 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.date     "trip_date_end"
   end
 
-  add_index "memories", ["user_id"], name: "index_memories_on_user_id"
+  add_index "memories", ["user_id"], name: "index_memories_on_user_id", using: :btree
 
   create_table "memory_details", force: :cascade do |t|
     t.string   "notes"
@@ -45,8 +48,8 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.integer  "memory_id"
   end
 
-  add_index "memory_details", ["memory_id"], name: "index_memory_details_on_memory_id"
-  add_index "memory_details", ["winery_id"], name: "index_memory_details_on_winery_id"
+  add_index "memory_details", ["memory_id"], name: "index_memory_details_on_memory_id", using: :btree
+  add_index "memory_details", ["winery_id"], name: "index_memory_details_on_winery_id", using: :btree
 
   create_table "profiles", force: :cascade do |t|
     t.string   "first_name"
@@ -64,8 +67,8 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.integer  "fb_user_id"
   end
 
-  add_index "profiles", ["fb_user_id"], name: "index_profiles_on_fb_user_id"
-  add_index "profiles", ["user_id"], name: "index_profiles_on_user_id"
+  add_index "profiles", ["fb_user_id"], name: "index_profiles_on_fb_user_id", using: :btree
+  add_index "profiles", ["user_id"], name: "index_profiles_on_user_id", using: :btree
 
   create_table "reviews", force: :cascade do |t|
     t.text     "comment"
@@ -77,8 +80,8 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.string   "photo"
   end
 
-  add_index "reviews", ["user_id"], name: "index_reviews_on_user_id"
-  add_index "reviews", ["winery_id"], name: "index_reviews_on_winery_id"
+  add_index "reviews", ["user_id"], name: "index_reviews_on_user_id", using: :btree
+  add_index "reviews", ["winery_id"], name: "index_reviews_on_winery_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -95,8 +98,8 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.datetime "updated_at",                          null: false
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "wineries", force: :cascade do |t|
     t.string   "name"
