@@ -1,0 +1,49 @@
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    
+    <ul class="nav navbar-nav">
+      <li><%= image_tag('WineGlasses.jpg', size: '50') %></li>
+      <li><a href=<%= wineries_path %>>Wineries</a></li>
+      
+      <%= form_tag("wineries_search", method: "post", class: "navbar-form navbar-left") do %>
+        <font color="grey"><%= label_tag(:city, "Search by city:") %></font>
+        <%= text_field_tag(:city) %>
+        <%= submit_tag("Go", class: "btn btn-default") %>
+      <% end %>
+
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle">My Stuff <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li>
+            <% if current_user.profile != nil %>
+              <a href=<%= user_profiles_path(current_user.id) %>>My Profile</a>
+            <% else %>
+              <a href=<%= new_user_profile_path(current_user.id) %>>Create Profile</a>
+            <% end %>
+          </li>
+          <li><a href=<%= user_memories_path(current_user.id) %>>My Memories</a></li>
+          <li><a href=<%= reviews_path %>>My Reviews</a></li>
+          <!-- <li role="separator" class="divider"></li>
+          <li><a href="#">Separated link</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="#">One more separated link</a></li> -->
+        </ul>
+      </li>
+      <ul class="nav navbar-nav navbar-right">
+        <li> <%= render 'layouts/auth_stuff' %> </li>
+      </ul>
+    </ul>
+    
+  </div>
+ </nav>
+ <p>
+ <% if notice %>
+    <p class="notice"><%= notice %></p>
+  <% end %>
+  <% if alert %>
+    <p class="alert"><%= alert %></p>
+   <% end %>
+ </p>
+

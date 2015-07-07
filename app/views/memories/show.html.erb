@@ -1,0 +1,42 @@
+<p><%= javascript_include_tag "application" %> </p>
+<h1 style="color:#000000;"><%= @memory.name %></h1>
+<p>
+	<table class="table table-striped table-hover">
+		
+			<tr class="small">
+						<td style="width:20%"><ul>
+							<% if @memory.trip_date != nil %>
+				 		<%= @memory.trip_date.strftime("%B %e %Y") %> 
+				 		<%= " to " + @memory.trip_date_end.strftime("%B %e %Y") unless @memory.trip_date_end.nil? %>
+				 		<% end %>
+						 	</ul>
+						</td>
+			</tr>
+			<tr>
+				<th>Winery </th>
+				<th>Notes </th>
+				<th></th>
+				<th>Date of Visit</th>
+			</tr>
+				<% @memory.memory_details.each do |detail| %>
+					<tr class="small">
+						<td><ul>
+							<b><%= link_to Winery.where(id: detail.winery_id).first.name, winery_path(detail.winery_id) %></b>
+							</ul>
+						</td>
+						<td><%= detail.notes %>
+						</td>
+						<td><% if detail.visited == true %>
+									I've been here before
+							<% end %>
+						</td>
+						<td>
+							<%= detail.visited_date.strftime("%B %e %Y") unless detail.visited_date.nil?%>
+							
+						</td>
+						<td><%= link_to "Edit Memory Detail", edit_memory_detail_path(detail), class: 'btn btn-info' %>
+				</td>
+						<% end %>
+			</tr>	
+	</table>
+</p>
