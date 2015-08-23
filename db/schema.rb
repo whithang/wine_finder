@@ -11,10 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150705070821) do
+ActiveRecord::Schema.define(version: 20150823172243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "atmospheres", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "attribute_categories", force: :cascade do |t|
+    t.string  "name"
+    t.integer "wine_type_id"
+  end
+
+  add_index "attribute_categories", ["wine_type_id"], name: "index_attribute_categories_on_wine_type_id", using: :btree
 
   create_table "fb_users", force: :cascade do |t|
     t.string   "provider"
@@ -46,6 +57,8 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.datetime "updated_at",   null: false
     t.integer  "winery_id"
     t.integer  "memory_id"
+    t.time     "visit_time"
+    t.boolean  "reservation"
   end
 
   add_index "memory_details", ["memory_id"], name: "index_memory_details_on_memory_id", using: :btree
@@ -83,6 +96,37 @@ ActiveRecord::Schema.define(version: 20150705070821) do
   add_index "reviews", ["user_id"], name: "index_reviews_on_user_id", using: :btree
   add_index "reviews", ["winery_id"], name: "index_reviews_on_winery_id", using: :btree
 
+  create_table "tasting_attributes", force: :cascade do |t|
+    t.string  "name"
+    t.text    "bio"
+    t.integer "attribute_category_id"
+  end
+
+  add_index "tasting_attributes", ["attribute_category_id"], name: "index_tasting_attributes_on_attribute_category_id", using: :btree
+
+  create_table "tasting_attributes_notes", id: false, force: :cascade do |t|
+    t.integer "tasting_note_id",      null: false
+    t.integer "tasting_attribute_id", null: false
+  end
+
+  create_table "tasting_menus", force: :cascade do |t|
+    t.date    "menu_start_date"
+    t.integer "wine_id"
+  end
+
+  add_index "tasting_menus", ["wine_id"], name: "index_tasting_menus_on_wine_id", using: :btree
+
+  create_table "tasting_notes", force: :cascade do |t|
+    t.date    "tasting_date"
+    t.text    "notes"
+    t.boolean "purchased"
+    t.integer "wine_id"
+    t.integer "user_id"
+  end
+
+  add_index "tasting_notes", ["user_id"], name: "index_tasting_notes_on_user_id", using: :btree
+  add_index "tasting_notes", ["wine_id"], name: "index_tasting_notes_on_wine_id", using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -101,6 +145,32 @@ ActiveRecord::Schema.define(version: 20150705070821) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  create_table "varietals", force: :cascade do |t|
+    t.string  "name"
+    t.text    "bio"
+    t.integer "wine_type_id"
+  end
+
+  add_index "varietals", ["wine_type_id"], name: "index_varietals_on_wine_type_id", using: :btree
+
+  create_table "varietals_wineries", id: false, force: :cascade do |t|
+    t.integer "varietal_id", null: false
+    t.integer "winery_id",   null: false
+  end
+
+  create_table "varietals_wines", id: false, force: :cascade do |t|
+    t.integer "wine_id",     null: false
+    t.integer "varietal_id", null: false
+    t.float   "percentage"
+  end
+
+  add_index "varietals_wines", ["varietal_id", "wine_id"], name: "index_varietals_wines_on_varietal_id_and_wine_id", using: :btree
+  add_index "varietals_wines", ["wine_id", "varietal_id"], name: "index_varietals_wines_on_wine_id_and_varietal_id", using: :btree
+
+  create_table "wine_types", force: :cascade do |t|
+    t.string "name"
+  end
+
   create_table "wineries", force: :cascade do |t|
     t.string   "name"
     t.text     "bio"
@@ -109,8 +179,8 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.string   "state"
     t.integer  "zip"
     t.string   "photo"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.string   "phone"
     t.string   "email"
     t.boolean  "appointment"
@@ -120,6 +190,42 @@ ActiveRecord::Schema.define(version: 20150705070821) do
     t.time     "open"
     t.time     "close"
     t.string   "website"
+    t.string   "appointment_url"
+    t.boolean  "food"
+    t.boolean  "tour"
+    t.boolean  "family"
+    t.string   "logo"
+    t.string   "club"
+    t.string   "facebook"
+    t.string   "twitter"
+    t.string   "instagram"
+    t.string   "pinterest"
+    t.integer  "atmosphere_id"
+    t.text     "tour_list"
+    t.text     "event_list"
   end
 
+  add_index "wineries", ["atmosphere_id"], name: "index_wineries_on_atmosphere_id", using: :btree
+
+  create_table "wines", force: :cascade do |t|
+    t.string  "name"
+    t.integer "year"
+    t.string  "region"
+    t.text    "bio"
+    t.float   "price"
+    t.float   "club_price"
+    t.string  "photo"
+    t.integer "winery_id"
+  end
+
+  add_index "wines", ["winery_id"], name: "index_wines_on_winery_id", using: :btree
+
+  add_foreign_key "attribute_categories", "wine_types"
+  add_foreign_key "tasting_attributes", "attribute_categories"
+  add_foreign_key "tasting_menus", "wines"
+  add_foreign_key "tasting_notes", "users"
+  add_foreign_key "tasting_notes", "wines"
+  add_foreign_key "varietals", "wine_types"
+  add_foreign_key "wineries", "atmospheres"
+  add_foreign_key "wines", "wineries"
 end
