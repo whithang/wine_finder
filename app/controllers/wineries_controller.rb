@@ -25,7 +25,7 @@ class WineriesController < ApplicationController
       render 'edit'
     end
   end
- 	
+
  	def show
  		@winery = get_winery
     if current_user
@@ -40,7 +40,8 @@ class WineriesController < ApplicationController
   	# @search_address = Winery.find_by_address(params["SearchInput"])
   	# add this method or figure out how to search
     # downcase after entry
-    
+
+    # currently restricted to search by city but need to make by address
     if !params[:city].blank?
       @city = params[:city]
       @wineries = Winery.city(@city)
@@ -56,7 +57,7 @@ class WineriesController < ApplicationController
     @winery.destroy
     redirect_to wineries_path, notice: "Winery successfully deleted"
   end
-  
+
   private
 
   def winery_params
