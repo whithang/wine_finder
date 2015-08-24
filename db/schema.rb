@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150823172243) do
+ActiveRecord::Schema.define(version: 20150824045217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,17 +26,6 @@ ActiveRecord::Schema.define(version: 20150823172243) do
   end
 
   add_index "attribute_categories", ["wine_type_id"], name: "index_attribute_categories_on_wine_type_id", using: :btree
-
-  create_table "fb_users", force: :cascade do |t|
-    t.string   "provider"
-    t.string   "uid"
-    t.string   "name"
-    t.string   "oauth_token"
-    t.datetime "oauth_expires_at"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.string   "email"
-  end
 
   create_table "memories", force: :cascade do |t|
     t.string   "name"
@@ -77,10 +66,8 @@ ActiveRecord::Schema.define(version: 20150823172243) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "user_id"
-    t.integer  "fb_user_id"
   end
 
-  add_index "profiles", ["fb_user_id"], name: "index_profiles_on_fb_user_id", using: :btree
   add_index "profiles", ["user_id"], name: "index_profiles_on_user_id", using: :btree
 
   create_table "reviews", force: :cascade do |t|
