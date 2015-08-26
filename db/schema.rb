@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150824045217) do
+ActiveRecord::Schema.define(version: 20150826050403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,11 +21,13 @@ ActiveRecord::Schema.define(version: 20150824045217) do
   end
 
   create_table "attribute_categories", force: :cascade do |t|
-    t.string  "name"
-    t.integer "wine_type_id"
+    t.string "name"
   end
 
-  add_index "attribute_categories", ["wine_type_id"], name: "index_attribute_categories_on_wine_type_id", using: :btree
+  create_table "attribute_sub_categories", force: :cascade do |t|
+    t.string  "name"
+    t.integer "geek_level"
+  end
 
   create_table "memories", force: :cascade do |t|
     t.string   "name"
@@ -87,9 +89,13 @@ ActiveRecord::Schema.define(version: 20150824045217) do
     t.string  "name"
     t.text    "bio"
     t.integer "attribute_category_id"
+    t.integer "attribute_sub_category_id"
+    t.integer "wine_type_id"
   end
 
   add_index "tasting_attributes", ["attribute_category_id"], name: "index_tasting_attributes_on_attribute_category_id", using: :btree
+  add_index "tasting_attributes", ["attribute_sub_category_id"], name: "index_tasting_attributes_on_attribute_sub_category_id", using: :btree
+  add_index "tasting_attributes", ["wine_type_id"], name: "index_tasting_attributes_on_wine_type_id", using: :btree
 
   create_table "tasting_attributes_notes", id: false, force: :cascade do |t|
     t.integer "tasting_note_id",      null: false
@@ -207,8 +213,9 @@ ActiveRecord::Schema.define(version: 20150824045217) do
 
   add_index "wines", ["winery_id"], name: "index_wines_on_winery_id", using: :btree
 
-  add_foreign_key "attribute_categories", "wine_types"
   add_foreign_key "tasting_attributes", "attribute_categories"
+  add_foreign_key "tasting_attributes", "attribute_sub_categories"
+  add_foreign_key "tasting_attributes", "wine_types"
   add_foreign_key "tasting_menus", "wines"
   add_foreign_key "tasting_notes", "users"
   add_foreign_key "tasting_notes", "wines"
